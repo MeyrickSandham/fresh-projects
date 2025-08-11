@@ -1,0 +1,233 @@
+<div class="grid">
+
+  <div class="col-3">
+
+    <p-panel header="Floorplan Details">
+      <ul class="list-none p-0 m-0">
+        <li class="grid">
+          <div class="col-6 font-bold">Name</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Name }}</div>
+        </li>
+
+        <li class="grid">
+          <div class="col-6 font-bold">Description</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Description }}</div>
+        </li>
+
+        <li class="grid">
+          <div class="col-6 font-bold">Price</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Price }}</div>
+        </li>
+
+        <li class="grid">
+          <div class="col-6 font-bold">Address Type</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Address.Type }}</div>
+        </li>
+
+        <li class="grid">
+          <div class="col-6 font-bold">Address</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Address.Line1 }}</div>
+        </li>
+
+        <li class="grid" *ngIf="currentFloorplan.Address.Line2">
+          <div class="col-6 font-bold">Address (line2)</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Address.Line2 }}</div>
+        </li>
+
+        <li class="grid" *ngIf="currentFloorplan.Address.Line3">
+          <div class="col-6 font-bold">Address (line3)</div>
+          <div class="col-6 text-right">{{ currentFloorplan.Address.Line3 }}</div>
+        </li>
+      </ul>
+    </p-panel>
+
+    <!--
+    Initial  
+    
+      <p-panel header="Floorplan Details">
+
+    <ul>
+      <li>Name: {{ currentFloorplan.Name }}</li>
+      <li>Description: {{currentFloorplan.Description}}</li>
+      <li>Price: {{currentFloorplan.Price}}</li>
+      <li>Address Type: {{ currentFloorplan.Address.Type }}</li>
+      <li>Address: {{ currentFloorplan.Address.Line1 }}</li>
+      <li *ngIf="currentFloorplan.Address.Line2">Address (line2): {{currentFloorplan.Address.Line2}}</li>
+      <li *ngIf="currentFloorplan.Address.Line3">Address (line3): {{currentFloorplan.Address.Line3}}</li>
+    </ul>
+
+  </p-panel>
+      -->
+
+
+  </div>
+
+  <div class="col-6">
+
+    <div class="fp-wrap">
+
+      <img [src]="currentFloorplan.MainImage.MainImage"
+           alt="{{ currentFloorplan.Name }}"
+           usemap="#floorplan-map"
+           #planImg
+           (load)="onImgLoad(planImg)" />
+
+      <svg class="fp-overlay"
+           *ngIf="naturalW && naturalH"
+           [attr.viewBox]="'0 0 ' + naturalW + ' ' + naturalH"
+           preserveAspectRatio="xMidYMid meet">
+        <ng-container *ngFor="let room of currentFloorplan.Rooms; trackBy: trackByRoomId">
+
+          <rect class="room"
+                [attr.x]="room.Coordinates.x"
+                [attr.y]="room.Coordinates.y"
+                [attr.width]="room.Coordinates.width"
+                [attr.height]="room.Coordinates.height"
+                [class.active]="selectedRoomId === room.Id"
+                (click)="selectRoom(room)"
+                (mouseenter)="hoveredRoomId = room.Id"
+                (mouseleave)="hoveredRoomId = null"></rect>
+
+          <text [attr.x]="room.Coordinates.x + room.Coordinates.width / 2"
+                [attr.y]="room.Coordinates.y + room.Coordinates.height / 2"
+                text-anchor="middle"
+                dominant-baseline="middle"
+                class="text-style">
+            {{ room.Name }}
+          </text>
+        </ng-container>
+      </svg>
+
+    </div>
+  </div>
+
+  @if(currentRoom){
+  <div class="col-3">
+
+    <p-panel header="Room Details">
+      <ul class="list-none p-0 m-0">
+        <li class="grid">
+          <div class="col-6 font-bold">Name</div>
+          <div class="col-6 text-right">{{ currentRoom.Name }}</div>
+        </li>
+
+        <li class="grid">
+          <div class="col-6 font-bold">Description</div>
+          <div class="col-6 text-right">{{ currentRoom.Description }}</div>
+        </li>
+      </ul>
+    </p-panel>
+
+    <!-- Initial
+      <p-panel header="Room Details">
+    <ul>
+      <li>Name: {{currentRoom?.Name}}</li>
+      <li>Description: {{currentRoom?.Description}}</li>
+    </ul>
+  </p-panel>
+      -->
+  </div>
+  }
+</div>
+
+<div class="grid">
+
+  <div class="col-12 flex justify-content-center align-items-center">
+    <h2>Gallery</h2>
+  </div>
+
+  <div class="col-8 col-offset-2">
+    <p-panel>
+      <p-galleria [value]="currentFloorplan.ImageList"                  
+                  [numVisible]="5">
+        <ng-template pTemplate="item" let-item>
+          <img [src]="item.MainImage" style="width:100%" />
+        </ng-template>
+
+        <ng-template pTemplate="thumbnail" let-item>
+          <img [src]="item.ThumbnailImage" />
+        </ng-template>
+      </p-galleria>
+    </p-panel>
+  </div>
+</div>
+
+
+
+<!--
+  THIS WAS THE RAW BASIC I MANUALLY CREATED, I THEN ABSTRACTED AND EXTENDED THIS MODEL
+
+  <div class="grid">
+
+  <div class="col-10 col-offset-3">
+
+    <div class="fp-wrap">
+      <img src="floorplan.jpg" usemap="#floorplan-map" #planImg (load)="onImgLoad(planImg)" />
+
+
+      <svg class="fp-overlay" *ngIf="naturalW && naturalH"
+           [attr.viewBox]="'0 0 ' + naturalW + ' ' + naturalH"
+           preserveAspectRatio="xMidYMid meet">
+
+
+        <rect x="75" y="40" width="150" height="230"
+              class="room"
+              [class.active]="selectedRoom === 'Badkamer'"
+              (click)="selectRoom('Badkamer')"
+              (mouseenter)="hovered='Badkamer'"
+              (mouseleave)="hovered=null" />
+
+
+        <text [attr.x]="75 + 150 / 2"
+              [attr.y]="40 + 230 / 2"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              style="pointer-events:none; font: 600 16px sans-serif; fill:#111; paint-order:stroke; stroke:#fff; stroke-width:2">
+          Badkamer
+        </text>
+
+
+        <rect x="230" y="40" width="420" height="230"
+              class="room"
+              [class.active]="selectedRoom === 'Slaapkamer'"
+              (click)="selectRoom('Slaapkamer')"
+              (mouseenter)="hovered='Slaapkamer'"
+              (mouseleave)="hovered=null" />
+
+        <rect x="230" y="285" width="540" height="300"
+              class="room"
+              [class.active]="selectedRoom === 'Woonkamer'"
+              (click)="selectRoom('Woonkamer')"
+              (mouseenter)="hovered='Woonkamer'"
+              (mouseleave)="hovered=null" />
+
+        <rect x="75" y="285" width="150" height="107"
+              class="room"
+              [class.active]="selectedRoom === 'Hal'"
+              (click)="selectRoom('Hal')"
+              (mouseenter)="hovered='Hal'"
+              (mouseleave)="hovered=null" />
+
+        <rect x="75" y="400" width="150" height="185"
+              class="room"
+              [class.active]="selectedRoom === 'Keuken'"
+              (click)="selectRoom('Keuken')"
+              (mouseenter)="hovered='Keuken'"
+              (mouseleave)="hovered=null" />
+
+        <rect x="672" y="40" width="97" height="230"
+              class="room"
+              [class.active]="selectedRoom === 'Balkon'"
+              (click)="selectRoom('Balkon')"
+              (mouseenter)="hovered='Balkon'"
+              (mouseleave)="hovered=null" />
+
+
+      </svg>
+
+    </div>
+
+    <p>hovered: {{hovered}}</p>
+
+  </div>
+</div>-->
