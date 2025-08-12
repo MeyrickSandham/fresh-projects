@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "build": "nx run-many --target=build --configuration=development",
     "build-watch": "nx run-many --target=build --configuration=development --watch",
     "serve": "nx run fresh-projects:serve:development --watch"
   },

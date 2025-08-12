@@ -1,0 +1,23 @@
+name: manual-deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: false
+        default: 'staging'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Run remote deployment marker script
+        run: |
+            sshpass -p "${{ secrets.DROPLET_PASSWORD }}" \
+            ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} \
+            "./deploy.sh"

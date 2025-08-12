@@ -1,0 +1,54 @@
+name: build-push-image
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  UI_IMAGE_NAME: freshprojectsui
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node setup (adjust version if you need)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # cd ../fresh-projects-workspace
+      - name: Install deps
+        working-directory: ./fresh-projects-workspace
+        run: npm ci
+
+      # call npm run build
+      - name: Build UI
+        working-directory: ./fresh-projects-workspace
+        run: npm run build
+
+      # cd ..
+      # docker build -t freshprojectsui -f ./docker/dockerfile .
+      - name: Build image
+        run: docker build -t ${{ env.UI_IMAGE_NAME }} -f ./docker/dockerfile .
+
+      # Login & push (GitHub Packages classic: docker.pkg.github.com)
+      - name: Docker login (GitHub Packages)
+        run: docker login docker.pkg.github.com -u $GITHUB_ACTOR -p ${{ secrets.PAT }}
+
+      - name: Tag & push
+        shell: bash
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/${{ env.UI_IMAGE_NAME }}
+          IMAGE_ID=$(echo "$IMAGE_ID" | tr '[:upper:]' '[:lower:]')
+
+          # Derive version from ref; use 'latest' for master
+          VERSION="${GITHUB_REF##*/}"
+          [[ "$GITHUB_REF" == refs/tags/* ]] && VERSION="${VERSION#v}"
+          [[ "$VERSION" == "master" ]] && VERSION=latest
+
+          docker tag ${{ env.UI_IMAGE_NAME }} "$IMAGE_ID:$VERSION"
+          docker push "$IMAGE_ID:$VERSION"
