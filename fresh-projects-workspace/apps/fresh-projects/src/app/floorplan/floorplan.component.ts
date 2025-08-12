@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { PanelModule } from 'primeng/panel';
 import { GalleriaModule } from 'primeng/galleria';
 
-import { Room, Floorplan } from '../common/models/models';
+import { Room, Floorplan, Image } from '../common/models/models';
 import { FLOORPLANS } from '../common/models/floorplan.data';
 
 @Component({
@@ -28,12 +28,20 @@ export class FloorplanComponent {
   naturalW = 0;
   naturalH = 0;
 
+  responsiveOptions = [
+    { breakpoint: '1200px', numVisible: 4 },
+    { breakpoint: '992px', numVisible: 3 },
+    { breakpoint: '768px', numVisible: 2 },
+    { breakpoint: '576px', numVisible: 1 }
+  ];
+
   selectedRoomId: string | null = null;
   hoveredRoomId: string | null = null;
 
   floorplans: Floorplan[];
   currentFloorplan: Floorplan = FLOORPLANS[0];
   currentRoom: Room | null = null;
+  currentRoomImageList: Image[] | undefined = [];
 
   constructor() {
     
@@ -67,5 +75,6 @@ export class FloorplanComponent {
   selectRoom(room: Room) {
     this.selectedRoomId = room.Id;
     this.currentRoom = room;
+    this.currentRoomImageList = this.currentFloorplan.ImageList.filter(x => x.Title.includes(room.Name));
   }  
 }
