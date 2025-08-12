@@ -25,7 +25,6 @@ Using the technology of your choice, create a single-page web app for one house:
 - **Floorplan Panel** – Displays the floorplan image overlaid with clickable room shapes (SVG). Hover to highlight; click to select.
 - **Room Details Panel** – Shows the selected room’s name, description, and a **Room Gallery** filtered to that room.
 - **Main Gallery** – Displays **all floorplan images**, appearing beneath the Room Details panel.
-- **Responsive Layout** – Panels stack on small screens and sit side‑by‑side on large screens.
 
 ---
 
@@ -65,12 +64,12 @@ Using the technology of your choice, create a single-page web app for one house:
 
 ### Build the UI image (Windows)
 
-Run the 'BuildUIImage.bat' file as Administrator.
+Run the 'docker/BuildUIImage.bat' file as Administrator.
 This builds a local Docker image named `freshprojectsui` using the Dockerfile.
 
 ### Run the UI image (Windows)
 
-Run the 'RunUIImage.bat' file as Administrator.
+Run the 'docker/RunUIImage.bat' file as Administrator.
 This runs the local Docker image named `freshprojectsui`
 
 
