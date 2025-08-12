@@ -1,8 +1,8 @@
 export class Image {
-  public MainImage: string;
-  public ThumbnailImage: string;
-  public Alt: string;
-  public Title: string;
+  MainImage: string;
+  ThumbnailImage: string;
+  Alt: string;
+  Title: string;
 
   constructor(filename: string, thumbnailImage: string, alt: string, title: string) {
     this.MainImage = filename;
@@ -75,11 +75,13 @@ export class Room {
   Name: string;
   Description: string;  
   Coordinates: Coordinates;
+  ImageList: Image[];
 
-  constructor(id: string, name: string, description: string, coordinates: Coordinates) {
+  constructor(id: string, name: string, description: string, coordinates: Coordinates, imageList: Image[]) {
     this.Id = id;
     this.Name = name;
     this.Description = description;    
     this.Coordinates = coordinates;
+    this.ImageList = imageList;
   }
 }
